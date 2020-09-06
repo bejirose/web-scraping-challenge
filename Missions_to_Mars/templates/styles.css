@@ -1,0 +1,135 @@
+
+/* Weather page styles: Giving the body the specified background color, adding font sizes for the \
+  h1 and h3 elements we'll be using */
+body {
+  padding: 0;
+  margin: 0;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 18px;
+  line-height: 150%;
+  color: #333;
+  background: #efeee7;
+}
+
+.landing
+{
+  text-align: left;
+}
+
+footer 
+{
+  text-align: center;
+}
+
+/*
+.data_table 
+{
+  text-align: center;
+  margin-left: 200px;
+  background: white;
+}
+
+#table_head
+{
+  margin-left: 200px;
+}
+
+#landing_page,
+#latitude_image {
+  float: left;
+  background: white;
+}
+
+#latitude_image {
+  width: 200px;
+  height: 200px;
+  margin-right: 20px;
+}
+
+
+#comparison_page {
+ margin-right: 20px;
+ background: white;
+}
+
+#figure {
+  position: relative;
+}
+
+/*h1 {
+  font-size: 30px;
+}*/
+
+h {
+  color: #5191fd;
+}
+
+h4 
+{
+  text-align: center;
+}
+
+.navbar {
+  padding: 2px;
+  background: #5191fd; 
+}
+
+.container {
+  margin: 0 auto;
+  position: relative;
+}
+
+
+/* Centering our h1 tag inside our header, giving it a little padding, removing its margin */
+.navbar header h1 {
+ /* position: absolute;*/
+  padding: 2px;
+  left: 0;
+  color: #000;
+  text-align: left;
+  /* background: #538c83; */
+}
+
+/* Giving our navbar some padding and a background color */
+
+.navbar li {
+  display: inline-block;
+  padding: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+  background: white;
+  border-radius: 3px;
+}
+
+/* Getting rid of the default link styles here */
+.navbar li a {
+  color: #000;
+  /*text-decoration: none;*/
+}
+
+#images {
+  background: white;
+  /*text-decoration: none;*/
+}
+
+/* Giving the .post element margin on 3 sides */
+
+/* Adding media queries to show the drop-down, and hide the navbar when the screen is smaller than 480 pixels */
+@media (max-width: 480px) {
+  .navbar header {
+    background: gray; 
+  }
+
+  .navbar li {
+    padding: 10px;
+  }
+
+   
+  .navbar li {
+    visibility: hidden;
+  }*/
+
+  /*#nav-select {
+    visibility: visible;
+  }*/
+}
