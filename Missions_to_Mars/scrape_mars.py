@@ -1,102 +1,112 @@
 from splinter import Browser
+from flask import redirect
 from bs4 import BeautifulSoup as bs
 import pandas as pd
+import time
 
 
 def init_browser():
     # Path to the chromedriver
-    executable_path = {"executable_path": "C:/Beji/Data Analytics/Downloads/mongo driver/chromedriver_win32/chromedriver.exe"}
+    executable_path = {"executable_path": "chromedriver.exe"}
     return Browser("chrome", **executable_path, headless=False)
 
 
 def scrape_info():
-    print("in scrape_info")
-    mars_data = {}
-    browser = init_browser()
-    url = 'https://mars.nasa.gov/news/'
-    browser.visit(url)
-
-    # find  the latest news
-    html = browser.html
-
-    # Parse HTML with Beautiful Soup
-    soup = bs(html, 'html.parser')
-    news_list = soup.find_all('li', class_='slide')
-
-    # Iterate through each book
-    for news in news_list:
-        # Use Beautiful Soup's find() method to navigate and retrieve attributes
-        news_title = soup.find_all('div', class_='content_title')
-        for title in news_title:
-            if (title.a):
-                latest_news = title.a.text
-                print(f'latest News = {latest_news}')
-                #rint(latest_news)
-                break
-        if (news.a):
-            latest_text = news.a.text
-            #rint(news.a.text)
-            break
-    #print(f'News Title =\"{latest_news}\"\n')
-    #print(f'News Text =\"{latest_text}\"')   
-
-    ## JPL Mars Space Images - Featured Image
-
-    jpl_url = "https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars"
-
-    browser.visit(jpl_url)
-
-    jpl_html = browser.html
-
-    # Parse HTML with Beautiful Soup
-    jpl_soup = bs(jpl_html, 'html.parser')
-
-    featured_image = jpl_soup.find_all('a', class_= 'button fancybox')
-
-    # Iterate through each book
-    for tag in featured_image:
-        # Use Beautiful Soup's method to find iamge 'href'
-        image_url = tag['data-fancybox-href']
-        break
+    try:
     
-    complete_url = jpl_url + image_url
-    print(f'Featured Image URL = {complete_url}')
+        print("in scrape_info")
+        browser = init_browser()
+        url = 'https://mars.nasa.gov/news/'
+        browser.visit(url)
+        time.sleep(1)
+        # find  the latest news
+        html = browser.html
 
-    ## Mars Facts
+        # Parse HTML with Beautiful Soup
+        soup = bs(html, 'html.parser')
+        news_list = soup.find_all('li', class_='slide')
 
-    mars_url = "https://space-facts.com/mars/"
+        # Iterate through each book
+        for news in news_list:
+            print('news: {news}')
+            # Use Beautiful Soup's find() method to navigate and retrieve attributes
+            news_title = soup.find_all('div', class_='content_title')
+            for title in news_title:
+                if (title.a):
+                    latest_news = title.a.text
+                    print(f'News Title =\"{latest_news}\"\n')
+                    #rint(latest_news)
+                    break
+            if (news.a):
+                latest_text = news.a.text
+                print(f'News Text =\"{latest_text}\"')  
+                #rint(news.a.text)
+                break
+        
+         
 
-    tables = pd.read_html(mars_url)
-    mars_df = tables[0]
-    mars_df.rename(columns = {0:'Fact Heading', 1:'Fact Data'}, inplace = True)
-    mars_df.set_index('Fact Heading', inplace=True)
-    mars_df
+        #return redirect("/")
 
-    # convert the MARS dataframe to a HTML table string
+        ## JPL Mars Space Images - Featured Image
+        jpl_base_url = "https://www.jpl.nasa.gov"
+        jpl_url = "https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars"
 
-    mars_html = mars_df.to_html()
-    mars_html
+        browser.visit(jpl_url)
 
-    ## Mars Hemispheres
+        jpl_html = browser.html
 
-    base_url = "https://astrogeology.usgs.gov/"
-    mars_hs_url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
+        # Parse HTML with Beautiful Soup
+        jpl_soup = bs(jpl_html, 'html.parser')
 
-    browser.visit(mars_hs_url)
+        #featured_image = jpl_soup.find_all('a', class_= 'button fancybox')
 
-    mars_hs_html = browser.html
+        # Iterate through each book
+        # for tag in featured_image:
+        #     # Use Beautiful Soup's method to find iamge 'href'
+        #     image_url = tag['data-fancybox-href']
+        #     break
+    
+        image_url = jpl_soup.find(class_="carousel_item")['style']
+        print(image_url)
+        img_src = image_url.split("'")[1]
+        print(img_src)
 
-    # Parse HTML with Beautiful Soup
-    mars_hs_soup = bs(mars_hs_html, 'html.parser')
+        complete_url = jpl_base_url + img_src
+        print(f'Featured Image URL = {complete_url}')
 
-    #mars_images = mars_hs_soup.find_all('div', class_='collapsible results')
-    mars_images = mars_hs_soup.find_all('div', class_='item')
-    #print(mars_images)
+        ## Mars Facts
 
-    mars_list = []
-    # # Iterate through all pages
-    for image in mars_images:
-        try:
+        mars_url = "https://space-facts.com/mars/"
+
+        tables = pd.read_html(mars_url)
+        mars_df = tables[0]
+        mars_df.rename(columns = {0:'Fact Heading', 1:'Fact Data'}, inplace = True)
+        mars_df.set_index('Fact Heading', inplace=True)
+        mars_df
+
+        # convert the MARS dataframe to a HTML table string
+
+        mars_html = mars_df.to_html()
+        mars_html
+
+        ## Mars Hemispheres
+        base_url = "https://astrogeology.usgs.gov"
+        mars_hs_url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
+
+        browser.visit(mars_hs_url)
+
+        mars_hs_html = browser.html
+
+        # Parse HTML with Beautiful Soup
+        mars_hs_soup = bs(mars_hs_html, 'html.parser')
+
+        #mars_images = mars_hs_soup.find_all('div', class_='collapsible results')
+        mars_images = mars_hs_soup.find_all('div', class_='item')
+        #print(mars_images)
+
+        mars_list = []
+        # # Iterate through all pages
+        for image in mars_images:
             href = image.a['href']
             title = image.find('img')['alt']
             href = base_url + href
@@ -112,7 +122,6 @@ def scrape_info():
             #     pass
 
             mars_image_url = mars_hs_soup.find_all('div', class_='downloads')
-            sample = url.a['href']
             for url in mars_image_url:
                 #print(mars_image_url.find('h3'))
                 #mars_image_url = mars_hs_soup.find_all('div', class_='item')
@@ -120,26 +129,56 @@ def scrape_info():
                 #print(url)
                 mars_list.append({'title': title, 'img_url': sample_url})
                 break
-        except:
-            print("scrape complete")
-    print(mars_list)
+        print(mars_list)
 
 
 
- 
-    # Store data in a dictionary
-    mars_data = {
-        "latest_news_title": latest_news,
-        "latest_news_text": latest_text,
-        "jpl_image": complete_url,
-        "mars_fact": mars_html,
-        "mars_hemisphere": mars_list
-    }
+    
+        # Store data in a dictionary
+        mars_data = {
+            "latest_news_title": latest_news,
+            "latest_news_text": latest_text,
+            "jpl_image": complete_url,
+            "mars_fact": mars_html,
+            "mars_hemisphere": mars_list
+        }
 
-    #print(mars_data)
+        #print(mars_data)
 
-    # Close the browser after scraping
-    browser.quit()
+        # Close the browser after scraping
+        browser.quit()
+    except:
+        print("in except")
+        if (latest_news):
+            print(latest_news)
+            mars_data = {
+            "latest_news_title": latest_news
+        }
+        if (latest_text):
+            print(latest_text)
+            mars_data = {
+            "latest_news_text": latest_text
+        }
+        if (complete_url):
+            print(complete_url)
+            mars_data = {
+            "jpl_image": complete_url
+        }
+        if (mars_html):
+            print(mars_html)
+            mars_data = {
+            "mars_fact": mars_html
+        }
+        if (mars_list):
+            print(mars_html)
+            mars_data = {
+            "mars_hemisphere": mars_list
+        }
+        
 
     # Return results
     return mars_data
+
+    # Redirect back to home page
+    #return redirect("/")
+
